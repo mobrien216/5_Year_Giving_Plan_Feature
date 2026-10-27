@@ -739,6 +739,7 @@ const TONY_URL = null;
 /* Values card game: the focus areas each card (by its permanent id) selects. Every one of the 64
    focus areas is reachable from at least one card. A starting point for the program team to tune. */
 const CARD_POINTS = [5, 4, 3, 2, 1];   // a card's weight by rank, for the impact-area mix
+const CARD_MIN_WORDS = 1;              // words each card's reason needs before "Reveal my areas of interest" unlocks
 const CARD_AREAS = {
   'acceptance':      ['immigration', 'lgbtq', 'racial', 'peace'],
   'belonging':       ['commdev', 'youth', 'recreation'],
@@ -1493,7 +1494,8 @@ function loadCardGame(){
   const frame = $('cardFrame');
   if (frame.dataset.loaded) return;
   const send = (type, key) => `function(x){parent.postMessage({type:'${type}',${key}:x},'*');}`;
-  const bridge = `<script>window.TCF_VALUES_SORT_CONFIG={onReveal:${send('tcf:values-sort-reveal', 'picks')},onComplete:${send('tcf:values-sort-complete', 'record')}};try{if(parent.claude)window.claude=parent.claude;}catch(e){}<\/script>`;
+  // minWords: the game's own default asks for 3 words per reason; here any reason unlocks the reveal.
+  const bridge = `<script>window.TCF_VALUES_SORT_CONFIG={minWords:${CARD_MIN_WORDS},onReveal:${send('tcf:values-sort-reveal', 'picks')},onComplete:${send('tcf:values-sort-complete', 'record')}};try{if(parent.claude)window.claude=parent.claude;}catch(e){}<\/script>`;
   frame.srcdoc = CARD_SORT_HTML.replace('<script>', bridge + '<script>');
   frame.dataset.loaded = '1';
 }
